@@ -1,5 +1,5 @@
 
-obj-m := lock_basic.o
+obj-m := sensors.o
 
 KERNELDIR ?= /lib/modules/$(shell uname -r)/build
 

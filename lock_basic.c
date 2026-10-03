@@ -65,9 +65,9 @@ static int my_init(void){
         dev[i]->count = 0;
         spin_lock_init(&dev[i]->lock);
     }
-    proc_create_data("counter0", 0666, NULL, &pops, &dev[0]);
-    proc_create_data("counter1", 0666, NULL, &pops, &dev[1]);
-    proc_create_data("counter2", 0666, NULL, &pops, &dev[2]);
+    proc_create_data("counter0", 0666, NULL, &pops, dev[0]);
+    proc_create_data("counter1", 0666, NULL, &pops, dev[1]);
+    proc_create_data("counter2", 0666, NULL, &pops, dev[2]);
     pr_info("Module loaded \n");
 
     return 0;
@@ -81,5 +81,12 @@ static void my_exit(void){
     kfree(dev[0]);
     kfree(dev[1]);
     kfree(dev[2]);
-    pr_info("Module unload \n");
+    pr_info("Module unloaded\n");
 }
+
+
+module_init(my_init);
+module_exit(my_exit);
+
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Tanuk Kumar");
