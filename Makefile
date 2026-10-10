@@ -1,5 +1,5 @@
 
-obj-m := sensors.o
+obj-m := seqlock.o
 
 KERNELDIR ?= /lib/modules/$(shell uname -r)/build
 
