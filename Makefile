@@ -1,5 +1,5 @@
 
-obj-m := seqlock.o
+obj-m := completion_demo.o
 
 KERNELDIR ?= /lib/modules/$(shell uname -r)/build
 

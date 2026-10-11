@@ -6,11 +6,13 @@
 #include <linux/seqlock.h>
 #include <linux/uaccess.h>
 
+
 static struct {
     int a;
     int b;           /* invariant: b == a * 2 */
 } data;
 
+static DEFINE_SEQLOCK(sl);
 static struct task_struct *writer_thread;
 
 static int writer_fn(void *arg)
@@ -18,10 +20,13 @@ static int writer_fn(void *arg)
     int i = 0;
     while (!kthread_should_stop()) {
         i++;
+        write_seqlock(&sl);
         data.a = i;
         udelay(50);          /* widen the window between the two writes */
         data.b = i * 2;
-        usleep_range(100, 200);
+        write_sequnlock(&sl);
+
+        usleep_range(100, 200);        
     }
     return 0;
 }
@@ -31,8 +36,13 @@ static ssize_t proc_read(struct file *f, char __user *buf, size_t len, loff_t *o
     char msg[64];
     int a, b, n;
 
-    a = data.a;
-    b = data.b;
+    unsigned int seq;
+    do {
+        seq = read_seqbegin(&sl); 
+        a = data.a;
+        b = data.b;
+    }while (read_seqretry(&sl, seq));
+ 
     n = scnprintf(msg, sizeof(msg), "a=%d b=%d %s\n", a, b,
                   (b == a * 2) ? "OK" : "TORN");
     return simple_read_from_buffer(buf, len, off, msg, n);
