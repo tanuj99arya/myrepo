@@ -1,5 +1,5 @@
 
-obj-m := completion_demo.o
+obj-m := irq_intro.o
 
 KERNELDIR ?= /lib/modules/$(shell uname -r)/build
 

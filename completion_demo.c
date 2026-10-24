@@ -12,6 +12,7 @@ static struct timer_list my_timer;
 /* Simulates a hardirq handler by running in timer (softirq) context */
 static void timer_callback(struct timer_list *t)
 {
+//    pr_info("completion_demo: timer fired, calling complete()\n");
    complete(&done);
 }
 
@@ -23,8 +24,9 @@ static ssize_t proc_read(struct file *f, char __user *buf, size_t len, loff_t *o
     if (*off > 0)
         return 0;
     
+    // pr_info("completion_demo: read start, arming timer\n");    
     mod_timer(&my_timer, jiffies + 2*HZ); //timer fire for 2 sec
-    if(wait_for_completion_timeout(&done, 3*HZ))
+    if(!wait_for_completion_timeout(&done, 3*HZ))
         return -ETIMEDOUT;
     n = scnprintf(msg, sizeof(msg), "event fired after wait\n");    
 
