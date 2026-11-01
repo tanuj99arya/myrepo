@@ -1,5 +1,5 @@
 
-obj-m := irq_intro.o
+obj-m := tophalf.o
 
 KERNELDIR ?= /lib/modules/$(shell uname -r)/build
 
